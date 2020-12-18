@@ -23,7 +23,7 @@ def start_parse(conn):
 		username_id = db_connection.insert_username(conn, username)
 
 	set_of_tweets = scraper.start_scrape(username, pages_to_scroll, with_replies, retweets)
-	db_connection.insert_many_tweet_urls(conn, list(set_of_tweets), username_id)
+	db_connection.insert_loop_tweet_urls(conn, list(set_of_tweets), username_id)
 
 if __name__ == '__main__':
 	print('Starting up!')

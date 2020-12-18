@@ -74,6 +74,7 @@ def insert_one_tweet_url(conn, tweet_url, username_id):
 		print(e)
 
 #inserts a list of tweet urls associated with the given username_id
+#Warning: if one fails to insert due to unique constraints, the whole batch fails
 def insert_many_tweet_urls(conn, list_of_tweets, username_id):
 	try:
 		c = conn.cursor()
@@ -82,6 +83,21 @@ def insert_many_tweet_urls(conn, list_of_tweets, username_id):
 		conn.commit()
 	except Error as e:
 		print(e)
+
+#inserts tweet urls one by one from list
+def insert_loop_tweet_urls(conn, list_of_tweets, username_id):
+	c = conn.cursor()
+	sql = """ INSERT INTO tweeturls(tweeturl, username_id) VALUES (?, {0}) """.format(username_id)
+	for tweet_url in list_of_tweets:
+		try:
+			c.execute(sql, (tweet_url, ))
+			
+		except Error as e:
+			#probably a unique error
+			continue
+
+	conn.commit()
+
 
 #Inital DB setup, creates tables
 #Returns connection

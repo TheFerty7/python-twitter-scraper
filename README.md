@@ -1,8 +1,7 @@
 # python-twitter-scraper
 A twitter scraper written in python using BeautifulSoup, Selenium, and SQLite.
 Stores individual tweet urls for given user in a SQLite3 database.
-Requires Firefox and GeckoDriver for Selenium.
-
+Requires Firefox/GeckoDriver or Google Chrome/ChromeDriver for Selenium.
 
 TO DO LIST (in no particular order):
 1. Change scroll method to speed up url collection

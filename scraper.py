@@ -9,7 +9,27 @@ import queue
 import db_connection
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+
+valid_driver_types = ['firefox', 'chrome']
+
+#Select what headless web driver to use with Selenium.
+#driver_type: string must match one of the items in valid_driver_types
+#RETURNS: selenium.webdriver
+def select_driver(driver_type):
+	driver = None
+	if driver_type == 'firefox':
+		firefox_options = webdriver.FirefoxOptions()
+		firefox_options.set_headless()
+		driver = webdriver.Firefox(firefox_options=firefox_options)
+	elif driver_type == 'chrome':
+		options = Options()
+		options.headless = True
+		driver = webdriver.Chrome(options=options)
+	else:
+		return None
+	return driver
 
 #Start scrape, will load all tweets the specified username into a set.
 #username: the username of the account to be scraped
@@ -17,7 +37,7 @@ from selenium.webdriver.common.keys import Keys
 #with_replies: if true, will load the replies page instead of just the users regular tweets/retweets
 #retweets: if true, will include retweets. TODO: separate retweets into a different table/list?
 #RETURNS: Set<string> of tweets
-def start_scrape(username, pages_to_scroll, with_replies = False, retweets = False):
+def start_scrape(username, pages_to_scroll, driver_type, with_replies = False, retweets = False):
 
 	set_of_tweets = set()
 
@@ -25,10 +45,14 @@ def start_scrape(username, pages_to_scroll, with_replies = False, retweets = Fal
 		print('Must be at least 1 page')
 		return set_of_tweets
 
+	if driver_type in valid_driver_types:
+		driver = select_driver(driver_type.lower())
+	else:
+		print('Invalid driver type')
+		return set_of_tweets
+
 	try:
-		firefox_options = webdriver.FirefoxOptions()
-		firefox_options.set_headless()
-		driver = webdriver.Firefox(firefox_options=firefox_options)
+		
 		url = "http://www.twitter.com/" + username
 		if with_replies:
 			driver.get(url + "/with_replies")
@@ -75,8 +99,8 @@ def start_scrape(username, pages_to_scroll, with_replies = False, retweets = Fal
 				i = i+1
 			else:
 				break
-	except Error as e:
-		print(e)
+	except:
+		print("Error")
 	finally:
 		driver.close()
 		return set_of_tweets

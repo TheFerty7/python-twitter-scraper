@@ -36,6 +36,7 @@ def create_table(conn, sql):
 	except Error as e:
 		print(e)
 
+#Insert one username
 def insert_username(conn, username):
 	try:
 		c = conn.cursor()
